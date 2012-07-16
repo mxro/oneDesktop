@@ -40,7 +40,7 @@ public class CreateRealmForm extends javax.swing.JPanel {
         apiKeyField = new javax.swing.JTextField();
         createRealmButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        outputLog = new javax.swing.JTextArea();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -55,9 +55,10 @@ public class CreateRealmForm extends javax.swing.JPanel {
             }
         });
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane1.setViewportView(jTextArea1);
+        outputLog.setColumns(20);
+        outputLog.setFont(new java.awt.Font("Courier New", 0, 13)); // NOI18N
+        outputLog.setRows(5);
+        jScrollPane1.setViewportView(outputLog);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -107,21 +108,24 @@ public class CreateRealmForm extends javax.swing.JPanel {
 
         CoreDsl dsl = OneJre.init(apiKey);
 
+        createRealmButton.setEnabled(false);
+        
         dsl.createRealm(title).and(new WhenRealmCreated() {
 
             @Override
             public void thenDo(WithRealmCreatedResult wrcr) {
-                jTextArea1.setText( "Realm created successfully.\n"
+                outputLog.setText( "Realm created successfully.\n"
                         + "  root            : " + wrcr.root().getId() + "\n"
                         + "  secret          : " + wrcr.secret() + "\n"
                         + "  secret (partner): " + wrcr.partnerSecret() + "\n"
                         + "  direct link     : \n"
-                        + "           https://token:" + wrcr.secret() + "@" + wrcr.root().getId()+jTextArea1.getText());
+                        + "           https://token:" + wrcr.secret() + "@" + wrcr.root().getId().replaceFirst("https://", "") +outputLog.getText());
 
                 One.shutdown(wrcr.client()).and(new WhenShutdown() {
 
                     @Override
                     public void thenDo() {
+                        createRealmButton.setEnabled(true);
                     }
                 });
 
@@ -136,7 +140,7 @@ public class CreateRealmForm extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JTextArea outputLog;
     private javax.swing.JTextField tilteField;
     // End of variables declaration//GEN-END:variables
 }

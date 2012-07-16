@@ -15,6 +15,9 @@ import javax.swing.tree.TreePath;
  */
 public class MainJFrame extends javax.swing.JFrame {
 
+    final CreateRealmForm createRealmForm = new CreateRealmForm();
+    final UploadTextForm uploadTextForm = new UploadTextForm();
+    
     /**
      * Creates new form MainJFrame
      */
@@ -41,6 +44,8 @@ public class MainJFrame extends javax.swing.JFrame {
 
         javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("Operations");
         javax.swing.tree.DefaultMutableTreeNode treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Create Realm");
+        treeNode1.add(treeNode2);
+        treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Upload Text");
         treeNode1.add(treeNode2);
         jTree1.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
         jTree1.addTreeSelectionListener(new javax.swing.event.TreeSelectionListener() {
@@ -101,21 +106,34 @@ public class MainJFrame extends javax.swing.JFrame {
                appPanel.remove(comp);
         }
        
+         appPanel.setLayout(new java.awt.BorderLayout());
+        
        if (lastComponent.getUserObject().equals("Create Realm")) {
-           System.out.println("Create Realm selected.");
-            
-           final CreateRealmForm createRealmForm = new CreateRealmForm();
-           appPanel.setLayout(new java.awt.BorderLayout());
+           
+           
+          
            appPanel.add(createRealmForm);
            createRealmForm.setVisible(true);
           
           // appPanel.add(new JLabel("Here"));
-           appPanel.validate();;
+           
+          
+       } else if (lastComponent.getUserObject().equals("Upload Text")) {
+           
+          
+           
+           appPanel.add(uploadTextForm);
+           
+           uploadTextForm.setVisible(true);
+           
+       }
+       
+       appPanel.validate();;
            appPanel.revalidate();
            this.repaint();
            this.validate();
-          
-       }
+       
+       
     }//GEN-LAST:event_jTree1ValueChanged
 
     /**

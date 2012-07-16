@@ -11,6 +11,7 @@ import one.core.dsl.callbacks.WhenLoaded;
 import one.core.dsl.callbacks.WhenShutdown;
 import one.core.dsl.callbacks.results.WithLoadResult;
 import one.core.nodes.OneTypedReference;
+import one.core.nodes.OneValue;
 
 /**
  *
@@ -69,6 +70,7 @@ public class UploadTextForm extends javax.swing.JPanel {
         jLabel5.setText("Text");
 
         uploadText_text.setColumns(20);
+        uploadText_text.setFont(new java.awt.Font("Courier New", 0, 13)); // NOI18N
         uploadText_text.setRows(5);
         jScrollPane2.setViewportView(uploadText_text);
 
@@ -85,31 +87,36 @@ public class UploadTextForm extends javax.swing.JPanel {
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+            .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(uploadText_button))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel4)
-                        .addGap(18, 18, 18)
-                        .addComponent(uploadText_secret))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(uploadText_toNode))
-                    .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
-                        .addComponent(uploadText_public)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(uploadText_asValue)
-                        .addGap(28, 28, 28)
-                        .addComponent(jLabel6)
-                        .addGap(18, 18, 18)
-                        .addComponent(uploadText_name, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(582, 582, 582))
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane2)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(uploadText_button))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel3)
+                                    .addComponent(jLabel4))
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(uploadText_secret)
+                                    .addComponent(uploadText_toNode))))
+                        .addContainerGap())
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel5)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(uploadText_public)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(uploadText_asValue)
+                                .addGap(66, 66, 66)
+                                .addComponent(jLabel6)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(uploadText_name, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 10, Short.MAX_VALUE))))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -131,8 +138,8 @@ public class UploadTextForm extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 216, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(uploadText_button)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -141,15 +148,11 @@ public class UploadTextForm extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 343, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 57, Short.MAX_VALUE))
+            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 371, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -163,6 +166,9 @@ public class UploadTextForm extends javax.swing.JPanel {
 
     private void uploadText_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_uploadText_buttonActionPerformed
 
+
+        final CoreDsl dsl = OneJre.init("<no api key>");
+        
         final OneTypedReference<?> ref = One.reference(uploadText_toNode.getText());
 
         final String secret = uploadText_secret.getText();
@@ -170,8 +176,7 @@ public class UploadTextForm extends javax.swing.JPanel {
         final boolean asValue = uploadText_asValue.isSelected();
 
         final boolean isPublic = uploadText_public.isSelected();
-
-        final CoreDsl dsl = OneJre.init("<no api key>");
+        
         uploadText_button.setEnabled(false);
 
         dsl.load(ref).withSecret(secret).and(new WhenLoaded() {
@@ -182,18 +187,21 @@ public class UploadTextForm extends javax.swing.JPanel {
 
                 if (!asValue) {
                     dsl.append(uploadText_text.getText()).to(wlr.loadedNode()).in(wlr.client());
-
-
-
+                    
                 } else {
-                    dsl.append(uploadText_text.getText()).to(wlr.loadedNode()).atAddress("./" + uploadText_name.getText()).in(wlr.client());
+                    OneValue<?> appended =dsl.append(uploadText_text.getText()).to(wlr.loadedNode()).atAddress("./" + uploadText_name.getText()).in(wlr.client());
+                    dsl.append(dsl.reference("https://admin1.linnk.it/types/v01/isHtmlValue")).to(appended).in(wlr.client());
                 }
 
+                if (isPublic) {
+                    dsl.append(dsl.newNode().asPublicReadToken()).to(wlr.loadedNode()).in(wlr.client());
+                }
+                
                 dsl.shutdown(wlr.client()).and(new WhenShutdown() {
 
                     @Override
                     public void thenDo() {
-                        throw new UnsupportedOperationException("Not supported yet.");
+                        uploadText_button.setEnabled(true);
                     }
                 });
 
