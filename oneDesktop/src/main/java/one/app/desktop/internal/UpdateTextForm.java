@@ -4,6 +4,14 @@
  */
 package one.app.desktop.internal;
 
+import one.client.jre.OneJre;
+import one.core.domain.OneClient;
+import one.core.dsl.CoreDsl;
+import one.core.dsl.callbacks.WhenLoaded;
+import one.core.dsl.callbacks.WhenShutdown;
+import one.core.dsl.callbacks.results.WithLoadResult;
+import one.core.nodes.OneValue;
+
 /**
  *
  * @author mroh004
@@ -34,19 +42,29 @@ public class UpdateTextForm extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         nodeTextArea = new javax.swing.JTextArea();
         jPanel1 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
+        uploadChangesButton = new javax.swing.JButton();
 
         jLabel1.setText("Node URI:");
 
         jLabel2.setText("Secret:");
 
         loadButton.setText("Load");
+        loadButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                loadButtonActionPerformed(evt);
+            }
+        });
 
         nodeTextArea.setColumns(20);
         nodeTextArea.setRows(5);
         jScrollPane1.setViewportView(nodeTextArea);
 
-        jButton1.setText("Upload Changes");
+        uploadChangesButton.setText("Upload Changes");
+        uploadChangesButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                uploadChangesButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -54,13 +72,13 @@ public class UpdateTextForm extends javax.swing.JPanel {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton1)
+                .addComponent(uploadChangesButton)
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(jButton1)
+                .addComponent(uploadChangesButton)
                 .addGap(0, 11, Short.MAX_VALUE))
         );
 
@@ -105,8 +123,83 @@ public class UpdateTextForm extends javax.swing.JPanel {
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void loadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadButtonActionPerformed
+        
+        final CoreDsl dsl = OneJre.init("<no api key>");
+        
+        final OneClient c = dsl.createClient();
+        
+        loadButton.setEnabled(false);
+        
+        dsl.load(nodeField.getText()).withSecret(secretField.getText()).in(c).and(new WhenLoaded() {
+            
+            @Override
+            public void thenDo(WithLoadResult<Object> wlr) {
+                
+                Object resolved = dsl.dereference(wlr.loadedNode()).in(c);
+                
+                if (resolved instanceof OneValue<?>) {
+                    
+                    OneValue<?> oneValue = ((OneValue<Object>) resolved);
+                    
+                    nodeTextArea.setText(oneValue.getValue().toString());
+                    
+                } else {
+                    
+                    nodeTextArea.setText(resolved.toString());
+                }
+                
+                dsl.shutdown(c).and(new WhenShutdown() {
+                    
+                    @Override
+                    public void thenDo() {
+                        loadButton.setEnabled(true);
+                    }
+                });
+                
+            }
+        });
+   
+    }//GEN-LAST:event_loadButtonActionPerformed
+    
+    private void uploadChangesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_uploadChangesButtonActionPerformed
+        final CoreDsl dsl = OneJre.init("<no api key>");
+        
+        final OneClient c = dsl.createClient();
+        
+        uploadChangesButton.setEnabled(false);
+        
+        dsl.load(nodeField.getText()).withSecret(secretField.getText()).in(c).and(new WhenLoaded() {
+            
+            @Override
+            public void thenDo(WithLoadResult<Object> wlr) {
+                
+                Object resolved = dsl.dereference(wlr.loadedNode()).in(c);
+                
+                if (resolved instanceof OneValue<?>) {
+                    OneValue<?> oldValue = (OneValue<?>) resolved;
+                    
+                    OneValue<?> newValue = dsl.newNode(oldValue.getValue()).at(oldValue.getId());
+                    
+                    dsl.replace(wlr.loadedNode()).with(newValue).in(c);
+                    
+                } else {
+                    dsl.replace(wlr.loadedNode()).with(nodeTextArea.getText()).in(c);
+                }
+                
+                dsl.shutdown(c).and(new WhenShutdown() {
+                    
+                    @Override
+                    public void thenDo() {
+                        uploadChangesButton.setEnabled(true);
+                    }
+                });
+                
+            }
+        });
+    }//GEN-LAST:event_uploadChangesButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
@@ -115,5 +208,6 @@ public class UpdateTextForm extends javax.swing.JPanel {
     private javax.swing.JTextField nodeField;
     private javax.swing.JTextArea nodeTextArea;
     private javax.swing.JTextField secretField;
+    private javax.swing.JButton uploadChangesButton;
     // End of variables declaration//GEN-END:variables
 }
