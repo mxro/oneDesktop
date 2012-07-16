@@ -5,7 +5,8 @@
 package one.app.desktop.internal;
 
 import java.awt.Component;
-import javax.swing.JLabel;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
@@ -17,7 +18,8 @@ public class MainJFrame extends javax.swing.JFrame {
 
     final CreateRealmForm createRealmForm = new CreateRealmForm();
     final UploadTextForm uploadTextForm = new UploadTextForm();
-    
+    final UpdateTextForm updateTextForm = new UpdateTextForm();
+
     /**
      * Creates new form MainJFrame
      */
@@ -46,6 +48,8 @@ public class MainJFrame extends javax.swing.JFrame {
         javax.swing.tree.DefaultMutableTreeNode treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Create Realm");
         treeNode1.add(treeNode2);
         treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Upload Text");
+        treeNode1.add(treeNode2);
+        treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Update Text");
         treeNode1.add(treeNode2);
         jTree1.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
         jTree1.addTreeSelectionListener(new javax.swing.event.TreeSelectionListener() {
@@ -101,49 +105,64 @@ public class MainJFrame extends javax.swing.JFrame {
     private void jTree1ValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_jTree1ValueChanged
         TreePath p = evt.getPath();
         DefaultMutableTreeNode lastComponent = (DefaultMutableTreeNode) p.getLastPathComponent();
-        
+
         for (Component comp : appPanel.getComponents()) {
-               appPanel.remove(comp);
+            appPanel.remove(comp);
         }
-       
-         appPanel.setLayout(new java.awt.BorderLayout());
-        
-       if (lastComponent.getUserObject().equals("Create Realm")) {
-           
-           
-          
-           appPanel.add(createRealmForm);
-           createRealmForm.setVisible(true);
-          
-          // appPanel.add(new JLabel("Here"));
-           
-          
-       } else if (lastComponent.getUserObject().equals("Upload Text")) {
-           
-          
-           
-           appPanel.add(uploadTextForm);
-           
-           uploadTextForm.setVisible(true);
-           
-       }
-       
-       appPanel.validate();;
-           appPanel.revalidate();
-           this.repaint();
-           this.validate();
-       
-       
+
+        appPanel.setLayout(new java.awt.BorderLayout());
+
+        if (lastComponent.getUserObject().equals("Create Realm")) {
+
+
+
+            appPanel.add(createRealmForm);
+            createRealmForm.setVisible(true);
+
+            // appPanel.add(new JLabel("Here"));
+
+
+        } else if (lastComponent.getUserObject().equals("Upload Text")) {
+
+
+
+            appPanel.add(uploadTextForm);
+
+            uploadTextForm.setVisible(true);
+
+        } else if (lastComponent.getUserObject().equals("Update Text")) {
+            appPanel.add(updateTextForm);
+
+            updateTextForm.setVisible(true);
+        }
+
+        appPanel.validate();;
+        appPanel.revalidate();
+        this.repaint();
+        this.validate();
+
+
     }//GEN-LAST:event_jTree1ValueChanged
 
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /*
-         * Set the Nimbus look and feel
-         */
-        
+        try {
+            // Set System L&F
+            UIManager.setLookAndFeel(
+                    UIManager.getSystemLookAndFeelClassName());
+        } catch (UnsupportedLookAndFeelException e) {
+            // handle exception
+        } catch (ClassNotFoundException e) {
+            // handle exception
+        } catch (InstantiationException e) {
+            // handle exception
+        } catch (IllegalAccessException e) {
+            // handle exception
+        }
+
+
 
         /*
          * Create and display the form

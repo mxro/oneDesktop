@@ -7,8 +7,10 @@ package one.app.desktop.internal;
 import one.client.jre.OneJre;
 import one.core.domain.OneClient;
 import one.core.dsl.CoreDsl;
+import one.core.dsl.callbacks.WhenCommitted;
 import one.core.dsl.callbacks.WhenLoaded;
 import one.core.dsl.callbacks.WhenShutdown;
+import one.core.dsl.callbacks.results.WithCommittedResult;
 import one.core.dsl.callbacks.results.WithLoadResult;
 import one.core.nodes.OneValue;
 
@@ -125,77 +127,81 @@ public class UpdateTextForm extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void loadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadButtonActionPerformed
-        
+
         final CoreDsl dsl = OneJre.init("<no api key>");
-        
+
         final OneClient c = dsl.createClient();
-        
+
         loadButton.setEnabled(false);
-        
+
         dsl.load(nodeField.getText()).withSecret(secretField.getText()).in(c).and(new WhenLoaded() {
-            
+
             @Override
             public void thenDo(WithLoadResult<Object> wlr) {
-                
+
                 Object resolved = dsl.dereference(wlr.loadedNode()).in(c);
-                
+
                 if (resolved instanceof OneValue<?>) {
-                    
+
                     OneValue<?> oneValue = ((OneValue<Object>) resolved);
-                    
+
                     nodeTextArea.setText(oneValue.getValue().toString());
-                    
+
                 } else {
-                    
+
                     nodeTextArea.setText(resolved.toString());
                 }
-                
+
                 dsl.shutdown(c).and(new WhenShutdown() {
-                    
+
                     @Override
                     public void thenDo() {
                         loadButton.setEnabled(true);
                     }
                 });
-                
+
             }
         });
-   
+
     }//GEN-LAST:event_loadButtonActionPerformed
-    
+
     private void uploadChangesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_uploadChangesButtonActionPerformed
         final CoreDsl dsl = OneJre.init("<no api key>");
-        
+
         final OneClient c = dsl.createClient();
-        
+
         uploadChangesButton.setEnabled(false);
-        
+
         dsl.load(nodeField.getText()).withSecret(secretField.getText()).in(c).and(new WhenLoaded() {
-            
+
             @Override
             public void thenDo(WithLoadResult<Object> wlr) {
-                
+
                 Object resolved = dsl.dereference(wlr.loadedNode()).in(c);
-                
+
                 if (resolved instanceof OneValue<?>) {
                     OneValue<?> oldValue = (OneValue<?>) resolved;
-                    
-                    OneValue<?> newValue = dsl.newNode(oldValue.getValue()).at(oldValue.getId());
-                    
+
+                    OneValue<?> newValue = dsl.newNode(nodeTextArea.getText()).at(oldValue.getId());
+
                     dsl.replace(wlr.loadedNode()).with(newValue).in(c);
-                    
+                    //System.out.println("replacing with "+newValue)
                 } else {
                     dsl.replace(wlr.loadedNode()).with(nodeTextArea.getText()).in(c);
                 }
-                
+
+
                 dsl.shutdown(c).and(new WhenShutdown() {
-                    
+
                     @Override
                     public void thenDo() {
                         uploadChangesButton.setEnabled(true);
                     }
                 });
-                
+
+
+
+
             }
         });
     }//GEN-LAST:event_uploadChangesButtonActionPerformed
