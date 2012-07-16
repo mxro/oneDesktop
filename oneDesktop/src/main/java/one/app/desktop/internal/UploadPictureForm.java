@@ -13,9 +13,11 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import one.client.jre.OneJre;
@@ -25,6 +27,7 @@ import one.core.dsl.CoreDsl;
 import one.core.dsl.callbacks.WhenLoaded;
 import one.core.dsl.callbacks.WhenShutdown;
 import one.core.dsl.callbacks.results.WithLoadResult;
+import one.core.nodes.OneValue;
 
 /**
  *
@@ -62,6 +65,8 @@ public class UploadPictureForm extends javax.swing.JPanel {
         statusLabel = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         nameField = new javax.swing.JTextField();
+        loadFromFileButton = new javax.swing.JButton();
+        publicCheckBox = new javax.swing.JCheckBox();
 
         jLabel1.setText("to Node:");
 
@@ -116,12 +121,21 @@ public class UploadPictureForm extends javax.swing.JPanel {
             .addGroup(imagePanelLayout.createSequentialGroup()
                 .addGap(59, 59, 59)
                 .addComponent(statusLabel)
-                .addContainerGap(69, Short.MAX_VALUE))
+                .addContainerGap(43, Short.MAX_VALUE))
         );
 
         jLabel4.setText("Name");
 
         nameField.setText("image");
+
+        loadFromFileButton.setText("Load from File");
+        loadFromFileButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                loadFromFileButtonActionPerformed(evt);
+            }
+        });
+
+        publicCheckBox.setText("Public");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -136,17 +150,23 @@ public class UploadPictureForm extends javax.swing.JPanel {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
                             .addComponent(jLabel2)
-                            .addComponent(jLabel3))
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel4))
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(importFromClipboardButton)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel4)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(nameField))
                             .addComponent(toNodeField)
-                            .addComponent(secretField))))
+                            .addComponent(secretField)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(importFromClipboardButton)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(loadFromFileButton))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(nameField, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(publicCheckBox)))
+                                .addGap(0, 0, Short.MAX_VALUE)))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -164,8 +184,12 @@ public class UploadPictureForm extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(importFromClipboardButton)
+                    .addComponent(loadFromFileButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
-                    .addComponent(nameField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(nameField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(publicCheckBox))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(imagePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -173,6 +197,9 @@ public class UploadPictureForm extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    
+    
+    
     private void importFromClipboardButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importFromClipboardButtonActionPerformed
         Image img = getImageFromClipboard();
 
@@ -185,17 +212,8 @@ public class UploadPictureForm extends javax.swing.JPanel {
         selectedImage = (BufferedImage) img;
 
         statusLabel.setVisible(false);
-        ImageObserver io = new ImageObserver() {
-
-            public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
-                return true;
-            }
-        };
-        final ImageIcon imageIcon = new ImageIcon(img.getScaledInstance(Math.min(img.getWidth(io), imagePanel.getWidth()), Math.min(img.getHeight(io), imagePanel.getHeight()), 0));
-        imagePanel.removeAll();
-        JLabel pic = new JLabel(imageIcon);
-        imagePanel.setLayout(new BorderLayout());
-        imagePanel.add(pic);
+        
+        showImage(img);
     }//GEN-LAST:event_importFromClipboardButtonActionPerformed
 
     private void uploadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_uploadButtonActionPerformed
@@ -224,7 +242,11 @@ public class UploadPictureForm extends javax.swing.JPanel {
 
                 OneBytesData nodeData = new one.common.nodes.v01.OneBytesData(data, "image/png");
 
-                dsl.append(nodeData).to(wlr.loadedNode()).atAddress("./"+nameField).in(c);
+                OneValue<?> appended = dsl.append(nodeData).to(wlr.loadedNode()).atAddress("./"+nameField.getText()).in(c);
+                
+                if (publicCheckBox.isSelected()) {
+                    dsl.append(dsl.newNode().asPublicReadToken()).to(appended).in(c);
+                }
                 
                 dsl.shutdown(c).and(new WhenShutdown() {
 
@@ -245,6 +267,23 @@ public class UploadPictureForm extends javax.swing.JPanel {
 
     }//GEN-LAST:event_uploadButtonActionPerformed
 
+    private void loadFromFileButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadFromFileButtonActionPerformed
+        final JFileChooser fc = new JFileChooser();
+        int returnVal = fc.showOpenDialog(UploadPictureForm.this);
+
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File file = fc.getSelectedFile();
+            try {
+            BufferedImage img = ImageIO.read(file);
+            selectedImage = img;
+            showImage(img);
+            } catch (Throwable t) {
+                JOptionPane.showMessageDialog(null, "Cannot open file\n." + t.getMessage(), "onedb", 1);
+            }
+        } 
+        
+    }//GEN-LAST:event_loadFromFileButtonActionPerformed
+
     public static Image getImageFromClipboard() {
         Transferable trans = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
 
@@ -264,6 +303,22 @@ public class UploadPictureForm extends javax.swing.JPanel {
         }
         return null;
     }
+    
+    private void showImage(Image img) {
+        ImageObserver io = new ImageObserver() {
+
+            public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
+                return true;
+            }
+        };
+        
+        final ImageIcon imageIcon = new ImageIcon(img.getScaledInstance(Math.min(img.getWidth(io), imagePanel.getWidth()), Math.min(img.getHeight(io), imagePanel.getHeight()), 0));
+        imagePanel.removeAll();
+        JLabel pic = new JLabel(imageIcon);
+        imagePanel.setLayout(new BorderLayout());
+        imagePanel.add(pic);
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel imagePanel;
     private javax.swing.JButton importFromClipboardButton;
@@ -272,7 +327,9 @@ public class UploadPictureForm extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JButton loadFromFileButton;
     private javax.swing.JTextField nameField;
+    private javax.swing.JCheckBox publicCheckBox;
     private javax.swing.JTextField secretField;
     private javax.swing.JLabel statusLabel;
     private javax.swing.JTextField toNodeField;

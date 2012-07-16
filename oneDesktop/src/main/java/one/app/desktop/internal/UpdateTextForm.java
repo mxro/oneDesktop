@@ -4,6 +4,7 @@
  */
 package one.app.desktop.internal;
 
+import javax.swing.JOptionPane;
 import one.client.jre.OneJre;
 import one.core.domain.OneClient;
 import one.core.dsl.CoreDsl;
@@ -161,6 +162,14 @@ public class UpdateTextForm extends javax.swing.JPanel {
                 });
 
             }
+
+            @Override
+            public void onFailure(Throwable t) {
+                JOptionPane.showMessageDialog(null, "Could not load node\n." + t.getMessage(), "onedb", 1);
+                loadButton.setEnabled(true);
+            }
+            
+            
         });
 
     }//GEN-LAST:event_loadButtonActionPerformed
