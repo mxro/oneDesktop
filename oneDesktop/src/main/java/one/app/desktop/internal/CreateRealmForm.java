@@ -38,7 +38,7 @@ public class CreateRealmForm extends javax.swing.JPanel {
         tilteField = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         apiKeyField = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+        createRealmButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
 
@@ -46,18 +46,12 @@ public class CreateRealmForm extends javax.swing.JPanel {
 
         jLabel1.setText("Title");
 
-        tilteField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tilteFieldActionPerformed(evt);
-            }
-        });
-
         jLabel2.setText("API-Key");
 
-        jButton1.setText("Create");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        createRealmButton.setText("Create");
+        createRealmButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                createRealmButtonActionPerformed(evt);
             }
         });
 
@@ -83,7 +77,7 @@ public class CreateRealmForm extends javax.swing.JPanel {
                             .addComponent(tilteField)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jButton1)))
+                        .addComponent(createRealmButton)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -98,7 +92,7 @@ public class CreateRealmForm extends javax.swing.JPanel {
                     .addComponent(jLabel2)
                     .addComponent(apiKeyField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton1)
+                .addComponent(createRealmButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 263, Short.MAX_VALUE)
                 .addContainerGap())
@@ -107,11 +101,7 @@ public class CreateRealmForm extends javax.swing.JPanel {
         add(jPanel1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void tilteFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tilteFieldActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_tilteFieldActionPerformed
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void createRealmButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createRealmButtonActionPerformed
         String apiKey = apiKeyField.getText();
         String title = tilteField.getText();
 
@@ -137,11 +127,11 @@ public class CreateRealmForm extends javax.swing.JPanel {
 
             }
         });
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_createRealmButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField apiKeyField;
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton createRealmButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
