@@ -153,7 +153,9 @@ public class MainJFrame extends javax.swing.JFrame {
 
             updateTextForm.setVisible(true);
         } else if (lastComponent.getUserObject().equals("Upload Picture")) {
+            appPanel.add(uploadPictureForm);
             
+            uploadPictureForm.setVisible(true);
         }
 
         appPanel.validate();;

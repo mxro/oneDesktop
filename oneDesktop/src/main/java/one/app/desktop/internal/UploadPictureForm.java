@@ -10,20 +10,34 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.image.BufferedImage;
+import java.awt.image.ImageObserver;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import one.client.jre.OneJre;
+import one.common.nodes.v01.OneBytesData;
+import one.core.domain.OneClient;
+import one.core.dsl.CoreDsl;
+import one.core.dsl.callbacks.WhenLoaded;
+import one.core.dsl.callbacks.WhenShutdown;
+import one.core.dsl.callbacks.results.WithLoadResult;
 
 /**
  *
  * @author mroh004
  */
-public class UploadPicture extends javax.swing.JPanel {
+public class UploadPictureForm extends javax.swing.JPanel {
+
+    private BufferedImage selectedImage = null;
 
     /**
      * Creates new form UploadPicture
      */
-    public UploadPicture() {
+    public UploadPictureForm() {
         initComponents();
     }
 
@@ -46,12 +60,19 @@ public class UploadPicture extends javax.swing.JPanel {
         importFromClipboardButton = new javax.swing.JButton();
         imagePanel = new javax.swing.JPanel();
         statusLabel = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        nameField = new javax.swing.JTextField();
 
         jLabel1.setText("to Node:");
 
         jLabel2.setText("Secret:");
 
         uploadButton.setText("Upload");
+        uploadButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                uploadButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -98,6 +119,10 @@ public class UploadPicture extends javax.swing.JPanel {
                 .addContainerGap(69, Short.MAX_VALUE))
         );
 
+        jLabel4.setText("Name");
+
+        nameField.setText("image");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -116,7 +141,10 @@ public class UploadPicture extends javax.swing.JPanel {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(importFromClipboardButton)
-                                .addGap(0, 0, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel4)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(nameField))
                             .addComponent(toNodeField)
                             .addComponent(secretField))))
                 .addContainerGap())
@@ -135,7 +163,9 @@ public class UploadPicture extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(importFromClipboardButton))
+                    .addComponent(importFromClipboardButton)
+                    .addComponent(jLabel4)
+                    .addComponent(nameField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(imagePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -145,17 +175,75 @@ public class UploadPicture extends javax.swing.JPanel {
 
     private void importFromClipboardButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importFromClipboardButtonActionPerformed
         Image img = getImageFromClipboard();
-        
-        if (img == null) {
+
+        if (img == null || !(img instanceof BufferedImage)) {
             statusLabel.setVisible(true);
             statusLabel.setText("Currently no valid image in clipboard.");
             return;
         }
-        statusLabel.setVisible(true);
-        JLabel pic = new JLabel(new ImageIcon( img ));
+
+        selectedImage = (BufferedImage) img;
+
+        statusLabel.setVisible(false);
+        ImageObserver io = new ImageObserver() {
+
+            public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
+                return true;
+            }
+        };
+        final ImageIcon imageIcon = new ImageIcon(img.getScaledInstance(Math.min(img.getWidth(io), imagePanel.getWidth()), Math.min(img.getHeight(io), imagePanel.getHeight()), 0));
+        imagePanel.removeAll();
+        JLabel pic = new JLabel(imageIcon);
         imagePanel.setLayout(new BorderLayout());
         imagePanel.add(pic);
     }//GEN-LAST:event_importFromClipboardButtonActionPerformed
+
+    private void uploadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_uploadButtonActionPerformed
+
+        final CoreDsl dsl = OneJre.init("<no api key>");
+
+        final OneClient c = dsl.createClient();
+
+        uploadButton.setEnabled(false);
+        
+        dsl.load(toNodeField.getText()).withSecret(secretField.getText()).in(c).and(new WhenLoaded() {
+
+            @Override
+            public void thenDo(WithLoadResult<Object> wlr) {
+
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                try {
+                    ImageIO.write(selectedImage, "png", bos);
+                    bos.flush();
+                } catch (Throwable t) {
+                    onFailure(t);
+                    return;
+                }
+
+                byte[] data = bos.toByteArray();
+
+                OneBytesData nodeData = new one.common.nodes.v01.OneBytesData(data, "image/png");
+
+                dsl.append(nodeData).to(wlr.loadedNode()).atAddress("./"+nameField).in(c);
+                
+                dsl.shutdown(c).and(new WhenShutdown() {
+
+                    @Override
+                    public void thenDo() {
+                        uploadButton.setEnabled(true);
+                    }
+                });
+
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                JOptionPane.showMessageDialog(null, "Could not load node\n." + t.getMessage(), "onedb", 1);
+                uploadButton.setEnabled(true);
+            }
+        });
+
+    }//GEN-LAST:event_uploadButtonActionPerformed
 
     public static Image getImageFromClipboard() {
         Transferable trans = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
@@ -163,7 +251,7 @@ public class UploadPicture extends javax.swing.JPanel {
         if (trans == null) {
             return null;
         }
-        
+
         try {
             if (trans != null && trans.isDataFlavorSupported(DataFlavor.imageFlavor)) {
                 Image img = (Image) trans.getTransferData(DataFlavor.imageFlavor);
@@ -176,14 +264,15 @@ public class UploadPicture extends javax.swing.JPanel {
         }
         return null;
     }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel imagePanel;
     private javax.swing.JButton importFromClipboardButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JTextField nameField;
     private javax.swing.JTextField secretField;
     private javax.swing.JLabel statusLabel;
     private javax.swing.JTextField toNodeField;
