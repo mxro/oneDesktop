@@ -48,6 +48,7 @@ public class UploadTextForm extends javax.swing.JPanel {
         uploadText_button = new javax.swing.JButton();
         jLabel6 = new javax.swing.JLabel();
         uploadText_name = new javax.swing.JTextField();
+        uploadedURI = new javax.swing.JTextField();
 
         jLabel3.setText("to Node:");
 
@@ -94,8 +95,9 @@ public class UploadTextForm extends javax.swing.JPanel {
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jScrollPane2)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(uploadText_button))
+                                .addComponent(uploadText_button)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(uploadedURI))
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel3)
@@ -138,10 +140,12 @@ public class UploadTextForm extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(uploadText_button)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(uploadedURI, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(uploadText_button))
+                .addGap(1, 1, 1))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -184,15 +188,18 @@ public class UploadTextForm extends javax.swing.JPanel {
             @Override
             public void thenDo(WithLoadResult<Object> wlr) {
 
-
+                Object uploaded;
                 if (!asValue) {
-                    dsl.append(uploadText_text.getText()).to(wlr.loadedNode()).in(wlr.client());
+                    uploaded = dsl.append(uploadText_text.getText()).to(wlr.loadedNode()).in(wlr.client());
                     
                 } else {
                     OneValue<?> appended =dsl.append(uploadText_text.getText()).to(wlr.loadedNode()).atAddress("./" + uploadText_name.getText()).in(wlr.client());
                     dsl.append(dsl.reference("https://admin1.linnk.it/types/v01/isHtmlValue")).to(appended).in(wlr.client());
+                    uploaded = appended;
                 }
 
+                final String uploadedUri = dsl.reference(uploaded).in(wlr.client()).getId();
+                
                 if (isPublic) {
                     dsl.append(dsl.newNode().asPublicReadToken()).to(wlr.loadedNode()).in(wlr.client());
                 }
@@ -201,6 +208,7 @@ public class UploadTextForm extends javax.swing.JPanel {
 
                     @Override
                     public void thenDo() {
+                        uploadedURI.setText(uploadedUri);
                         uploadText_button.setEnabled(true);
                     }
                 });
@@ -224,5 +232,6 @@ public class UploadTextForm extends javax.swing.JPanel {
     private javax.swing.JTextField uploadText_secret;
     private javax.swing.JTextArea uploadText_text;
     private javax.swing.JTextField uploadText_toNode;
+    private javax.swing.JTextField uploadedURI;
     // End of variables declaration//GEN-END:variables
 }
