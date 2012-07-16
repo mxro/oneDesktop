@@ -4,7 +4,7 @@ package one.app.desktop;
  * Hello world!
  *
  */
-public class App 
+public class OneDesktop 
 {
     public static void main( String[] args )
     {
