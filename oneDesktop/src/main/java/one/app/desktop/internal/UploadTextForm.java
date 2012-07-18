@@ -201,7 +201,7 @@ public class UploadTextForm extends javax.swing.JPanel {
                 final String uploadedUri = dsl.reference(uploaded).in(wlr.client()).getId();
                 
                 if (isPublic) {
-                    dsl.append(dsl.newNode().asPublicReadToken()).to(wlr.loadedNode()).in(wlr.client());
+                    dsl.append(dsl.newNode().asPublicReadToken()).to(dsl.reference(uploadedUri)).in(wlr.client());
                 }
                 
                 dsl.shutdown(wlr.client()).and(new WhenShutdown() {
