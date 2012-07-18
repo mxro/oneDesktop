@@ -4,6 +4,7 @@
  */
 package one.app.desktop.internal;
 
+import javax.swing.JOptionPane;
 import one.client.jre.OneJre;
 import one.common.One;
 import one.core.dsl.CoreDsl;
@@ -214,6 +215,13 @@ public class UploadTextForm extends javax.swing.JPanel {
                 });
 
             }
+
+            @Override
+            public void onFailure(Throwable t) {
+                JOptionPane.showMessageDialog(null, t.getMessage());
+            }
+            
+            
         });
 
     }//GEN-LAST:event_uploadText_buttonActionPerformed
