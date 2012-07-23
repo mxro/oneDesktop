@@ -20,7 +20,8 @@ public class MainJFrame extends javax.swing.JFrame {
     final UploadTextForm uploadTextForm = new UploadTextForm();
     final UpdateTextForm updateTextForm = new UpdateTextForm();
     final UploadPictureForm uploadPictureForm = new UploadPictureForm();
-
+    final AppendForm appendForm = new AppendForm();
+    
     /**
      * Creates new form MainJFrame
      */
@@ -54,6 +55,8 @@ public class MainJFrame extends javax.swing.JFrame {
         treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Update Text");
         treeNode1.add(treeNode2);
         treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Upload Picture");
+        treeNode1.add(treeNode2);
+        treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Append Node");
         treeNode1.add(treeNode2);
         jTree1.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
         jTree1.setRootVisible(false);
@@ -156,6 +159,8 @@ public class MainJFrame extends javax.swing.JFrame {
             appPanel.add(uploadPictureForm);
             
             uploadPictureForm.setVisible(true);
+        } else if (lastComponent.getUserObject().equals("Append Node")) {
+            appPanel.add(appendForm);
         }
 
         appPanel.validate();;
